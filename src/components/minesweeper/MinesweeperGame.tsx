@@ -22,7 +22,7 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
             {mineField.map((row, rowIndex) => (
                 <View key={rowIndex} style={styles.row}>
                     {row.map((number, colIndex) => (
-                        <Tile key={`${rowIndex}${colIndex}`} tileSize={tileSize} number={number}/>
+                        <Tile key={`${rowIndex}${colIndex}`} id={`${rowIndex}${colIndex}`} tileSize={tileSize} number={number}/>
                     ))}
                 </View>
             ))}

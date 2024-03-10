@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, Pressable, StyleSheet } from "react-native";
 
 export interface TileProps {
-    key: string
+    id? : string
     tileSize: number
     number: number
 }
@@ -22,27 +22,23 @@ export function Tile(props : TileProps) {
     const [backgroundColor, setBackgroundColor] = useState('#8FE186');
 
     const handlePress = () => {
-        if (!pressed) {
-          // Perform your action here
-          console.log('Button pressed!');
+        console.log('Pressed', props.id);
           
-          // Update state to indicate button has been pressed
-          setPressed(true);
-          setBackgroundColor('#EFD8A3')
-        }
+        setPressed(true);
+        setBackgroundColor('#EFD8A3')
     };
     
     return (
-        <Pressable 
-            key={props.key}
-            onPressOut={handlePress}
+        <Pressable
+            onPress={handlePress}
             disabled={pressed}
+            hitSlop={{top: 10}}
             style={({pressed}) => [
                 styles.square, 
                     {
                         height: props.tileSize - 5, 
                         width: props.tileSize - 5,
-                        backgroundColor: backgroundColor
+                        backgroundColor: pressed ? '#62B958' : backgroundColor
                     }]
                 }>
             <Text>{props.number}</Text>
