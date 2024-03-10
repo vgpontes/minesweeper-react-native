@@ -1,11 +1,18 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { registerRootComponent } from 'expo'
-import MinesweeperGame from 'components/minesweeper/Minesweeper';
+import MinesweeperGame from 'components/minesweeper/MinesweeperGame';
+import { Minesweeper } from 'utils/Minesweeper';
 
 export default function App() {
+  const minesweeperGame = new Minesweeper({
+    boardHeight: 9,
+    boardWidth: 9,
+    numMines: 10
+  });
+
   return (
     <View style={styles.container}>
-      <MinesweeperGame boardHeight={9} boardWidth={9} numMines={10}/>
+      <MinesweeperGame game={minesweeperGame}/>
     </View>
   );
 }

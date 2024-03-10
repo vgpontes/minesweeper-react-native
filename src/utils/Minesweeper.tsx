@@ -1,16 +1,14 @@
-import { StyleSheet, View, Text, Dimensions, Pressable } from "react-native"
-
 interface MinesweeperProps {
     boardWidth : number,
     boardHeight : number,
     numMines : number
 }
 
-class Minesweeper {
-    board : number[][];
-    boardWidth : number;
-    boardHeight : number;
-    numMines: number;
+export class Minesweeper {
+    readonly board : number[][];
+    readonly boardWidth : number;
+    readonly boardHeight : number;
+    readonly numMines: number;
 
     constructor(props : MinesweeperProps) {
         this.board = new Array(props.boardHeight).fill(0).map(() => (new Array(props.boardWidth).fill(0)));
@@ -63,51 +61,3 @@ class Minesweeper {
         }
     }
 }
-
-export default function MinesweeperGame(props: MinesweeperProps) {
-    const game = new Minesweeper(props);
-    const mineField = game.board;
-    game.printBoard()
-
-    const tileSize = Math.min(
-        Dimensions.get('window').width / game.boardWidth,
-        Dimensions.get('window').height / game.boardHeight
-    );
-
-    return (
-        <View style={styles.container}>
-            {mineField.map((row, rowIndex) => (
-                <View style={styles.row}>
-                    {row.map((number, colIndex) => (
-                        <Pressable 
-                            style={[styles.square, {height: tileSize - 5, width: tileSize - 5}]}>
-                                <Text key={`${rowIndex}${colIndex}`}>{number}</Text>
-                        </Pressable>
-                    ))}
-                </View>
-            ))}
-        </View>
-    );
-} 
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "auto",
-      backgroundColor: "green",
-      aspectRatio: 1
-    },
-    row: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-    },
-    square: {
-      backgroundColor: '#8FE186',
-      borderRadius: 5,
-      margin: 2,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-});
