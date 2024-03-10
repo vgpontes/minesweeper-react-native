@@ -43,21 +43,19 @@ export class Minesweeper {
     }
 
     private calculateNeighbors(i, j) {
-        this.addNeighbor(i + 1, j);
-        this.addNeighbor(i - 1, j);
-        this.addNeighbor(i, j + 1);
-        this.addNeighbor(i, j - 1);
-        this.addNeighbor(i + 1, j + 1);
-        this.addNeighbor(i + 1, j - 1);
-        this.addNeighbor(i - 1, j + 1);
-        this.addNeighbor(i - 1, j - 1);
-    }
+        const positions = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1],           [0, 1],
+            [1, -1],  [1, 0],  [1, 1]
+        ]
 
-    private addNeighbor(i, j) {
-        if (i < 0 || i > this.boardWidth - 1 || j < 0 || j > this.boardHeight - 1) return;
-        else if (this.board[i][j] == -1) return;
-        else {
-            this.board[i][j]++;
-        }
+        positions.forEach(([row, col]) =>{
+            const newRow = i + row;
+            const newCol = j + col;
+
+            if (newRow >= 0 && newRow < this.boardWidth && newCol >= 0 && newCol < this.boardHeight) {
+                if (this.board[newRow][newCol] != -1) this.board[newRow][newCol]++;
+            }
+        })
     }
 }

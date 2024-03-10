@@ -15,17 +15,24 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
         Dimensions.get('window').height / props.game.boardHeight
     );
 
+    const updateNeighboringTiles = (rowIndex, colIndex) => {
+        mineField
+    }
+
     handleTileSize();
 
     return (
         <View style={styles.container}>
-            {mineField.map((row, rowIndex) => (
+            {
+            mineField.map((row, rowIndex) => (
                 <View key={rowIndex} style={styles.row}>
                     {row.map((number, colIndex) => (
-                        <Tile key={`${rowIndex}${colIndex}`} id={`${rowIndex}${colIndex}`} tileSize={tileSize} number={number}/>
+                        <Tile key={`${rowIndex}${colIndex}`} rowIndex={rowIndex} 
+                              colIndex={colIndex} tileSize={tileSize} number={number}
+                              updateNeighboringTiles={updateNeighboringTiles}/>
                     ))}
                 </View>
-            ))}
+                    ))}
         </View>
     );
 }
@@ -61,12 +68,5 @@ const styles = StyleSheet.create({
     row: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-    },
-    square: {
-      borderRadius: 5,
-      margin: 2,
-      justifyContent: 'center',
-      alignItems: 'center',
-      userSelect: "none"
     },
 });

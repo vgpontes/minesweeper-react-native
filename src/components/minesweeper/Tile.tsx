@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Text, Pressable, StyleSheet } from "react-native";
 
 export interface TileProps {
-    id? : string
     tileSize: number
+    rowIndex: number
+    colIndex: number
     number: number
+    updateNeighboringTiles: (rowIndex : number, colIndex : number) => void
 }
 
 const styles = StyleSheet.create({
@@ -22,10 +24,11 @@ export function Tile(props : TileProps) {
     const [backgroundColor, setBackgroundColor] = useState('#8FE186');
 
     const handlePress = () => {
-        console.log('Pressed', props.id);
+        console.log('Pressed', props.rowIndex, props.colIndex);
           
         setPressed(true);
         setBackgroundColor('#EFD8A3')
+        props.updateNeighboringTiles(props.rowIndex, props.colIndex);
     };
     
     return (
