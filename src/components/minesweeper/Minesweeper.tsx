@@ -1,5 +1,4 @@
-import { View, Text } from "react-native"
-import FieldItem from "./Field";
+import { StyleSheet, View, Text, Dimensions, Pressable } from "react-native"
 
 interface MinesweeperProps {
     boardWidth : number,
@@ -25,7 +24,7 @@ class Minesweeper {
         var text = "";
         for (let i = 0; i < this.board.length; i++) {
             for (let j = 0; j < this.board[0].length; j++) {
-                text += this.board[i][j] + "   ";
+                text += this.board[i][j] + "\t";
             }
             text += "\n"
         }
@@ -37,7 +36,7 @@ class Minesweeper {
         while (placedMines < this.numMines) {
             const randX = Math.floor(Math.random() * (this.boardWidth));
             const randY = Math.floor(Math.random() * (this.boardHeight));
-            if (this.board[randX][randY] != 1) {
+            if (this.board[randX][randY] != -1) {
                 this.board[randX][randY] = -1 // place bomb
                 this.calculateNeighbors(randX, randY);
                 placedMines++;
@@ -67,18 +66,48 @@ class Minesweeper {
 
 export default function MinesweeperGame(props: MinesweeperProps) {
     const game = new Minesweeper(props);
+    const mineField = game.board;
     game.printBoard()
+
+    const tileSize = Math.min(
+        Dimensions.get('window').width / game.boardWidth,
+        Dimensions.get('window').height / game.boardHeight
+    );
+
     return (
-        <div className="grid">
-            {game.board.map((row, rowIndex) => (
-                <div key={rowIndex} className="row">
+        <View style={styles.container}>
+            {mineField.map((row, rowIndex) => (
+                <View style={styles.row}>
                     {row.map((number, colIndex) => (
-                        <span key={`${rowIndex}-${colIndex}`} className="cell">
-                            {number}
-                        </span>
+                        <Pressable 
+                            style={[styles.square, {height: tileSize - 5, width: tileSize - 5}]}>
+                                <Text key={`${rowIndex}${colIndex}`}>{number}</Text>
+                        </Pressable>
                     ))}
-                </div>
+                </View>
             ))}
-    </div>
+        </View>
     );
 } 
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "auto",
+      backgroundColor: "green",
+      aspectRatio: 1
+    },
+    row: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    square: {
+      backgroundColor: '#8FE186',
+      borderRadius: 5,
+      margin: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+});
