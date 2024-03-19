@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Dimensions, Pressable } from "react-native"
 import { Tile } from "./Tile";
-import { Minesweeper, TileInfo } from "utils/Minesweeper";
+import { Minesweeper, placeMines, revealTile } from "utils/Minesweeper";
 
 export interface MinesweeperGameProps {
     game: Minesweeper
+    numMines: number
 }
 
 export default function MinesweeperGame(props: MinesweeperGameProps) {
     const [board, setBoard] = useState(props.game.board);
-    const tilesLeft = board.length * board[0].length;
-
+    const boardHeight = board.length;
+    const boardWidth = board[0].length;
+    const [firstPress, setFirstPress] = useState(true);
+    
     const tileSize = Math.min(
-        Dimensions.get('window').width / props.game.boardWidth,
-        Dimensions.get('window').height / props.game.boardHeight
+        Dimensions.get('window').width / boardWidth,
+        Dimensions.get('window').height / boardHeight
     );
 
     const onTilePress = (rowIndex : number, colIndex : number) => {
-        const newBoard = [...board];
+        var newBoard = [...board];
+        if (firstPress) {
+            placeMines(newBoard, rowIndex, colIndex, props.numMines);
+            setFirstPress(false);
+        }
         revealTile(newBoard, rowIndex, colIndex);
         setBoard(newBoard);
-        if (tilesLeft == props.game.numMines) {
-            // TODO: GAME WIN
+        if (newBoard[rowIndex][colIndex].bombsNearby == -1) {
+
         }
     }
 
@@ -87,19 +94,3 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
     },
 });
-
-function revealTile(board : TileInfo[][], i: number, j : number) {
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j].isRevealed) return;
-    // set reveal
-    board[i][j].isRevealed = true;
-    if (board[i][j].bombsNearby === 0) {
-        revealTile(board, i + 1, j);
-        revealTile(board, i - 1, j);
-        revealTile(board, i, j + 1);
-        revealTile(board, i, j - 1);
-        revealTile(board, i + 1, j - 1);
-        revealTile(board, i - 1, j - 1);
-        revealTile(board, i + 1, j + 1);
-        revealTile(board, i - 1, j + 1);
-    }
-}

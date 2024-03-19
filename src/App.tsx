@@ -7,12 +7,11 @@ export default function App() {
   const minesweeperGame = new Minesweeper({
     boardHeight: 9,
     boardWidth: 9,
-    numMines: 10
   });
 
   return (
     <View style={styles.container}>
-      <MinesweeperGame game={minesweeperGame}/>
+      <MinesweeperGame game={minesweeperGame} numMines={10}/>
     </View>
   );
 }
