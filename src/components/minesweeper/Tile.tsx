@@ -26,12 +26,10 @@ export function Tile(props : TileProps) {
         if (isFlagged) {
             return;
         }
-        console.log('Pressed', props.rowIndex, props.colIndex);
         props.onPress(props.rowIndex, props.colIndex);
     };
     
     const handleHold = () => {
-        console.log('Held', props.rowIndex, props.colIndex);
         props.onHold(props.rowIndex, props.colIndex);
     };
 
@@ -47,8 +45,6 @@ export function Tile(props : TileProps) {
         }
         return bombsNearby ? bombsNearby : "";
     }
-
-    //#F06449
 
     const bgColorPicker = () => {
         if (!isRevealed) {
