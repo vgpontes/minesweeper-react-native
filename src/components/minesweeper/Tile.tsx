@@ -1,12 +1,11 @@
 import { Text, Pressable, StyleSheet } from "react-native";
+import { TileInfo } from "utils/Minesweeper";
 
 export interface TileProps {
     tileSize: number
     rowIndex: number
     colIndex: number
-    number: number
-    isRevealed: boolean
-    isFlag: boolean
+    tileInfo: TileInfo
     onPress: (rowIndex, colIndex) => void;
     onHold: (rowIndex, colIndex) => void;
 }
@@ -22,8 +21,9 @@ const styles = StyleSheet.create({
 });
 
 export function Tile(props : TileProps) {
+    const {bombsNearby, isFlagged, isRevealed} = props.tileInfo;
     const handlePress = () => {
-        if (props.isFlag) {
+        if (isFlagged) {
             return;
         }
         console.log('Pressed', props.rowIndex, props.colIndex);
@@ -35,13 +35,13 @@ export function Tile(props : TileProps) {
         props.onHold(props.rowIndex, props.colIndex);
     };
 
-    const bgColor = props.isRevealed ? '#EFD8A3' : '#8FE186'
+    const bgColor = isRevealed ? '#EFD8A3' : '#8FE186'
     
     return (
         <Pressable
             onPress={handlePress}
             onLongPress={handleHold}
-            disabled={props.isRevealed}
+            disabled={isRevealed}
             hitSlop={{top: 10}}
             style={({pressed}) => [
                 styles.square, 
@@ -51,7 +51,7 @@ export function Tile(props : TileProps) {
                         backgroundColor: pressed ? '#62B958': bgColor 
                     }]
                 }>
-            {props.isRevealed ? <Text>{props.number}</Text> : props.isFlag ? <Text>FLAG</Text> : null}
+            {isRevealed ? <Text>{bombsNearby ? bombsNearby : ""}</Text> : isFlagged ? <Text>FLAG</Text> : null}
         </Pressable>
     )
 }

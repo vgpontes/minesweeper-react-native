@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Dimensions, Pressable } from "react-native"
+import { StyleSheet, View, Dimensions, Pressable } from "react-native"
 import { Tile } from "./Tile";
-import { Minesweeper } from "utils/Minesweeper";
+import { Minesweeper, TileInfo } from "utils/Minesweeper";
 
 export interface MinesweeperGameProps {
     game: Minesweeper
@@ -9,8 +9,7 @@ export interface MinesweeperGameProps {
 
 export default function MinesweeperGame(props: MinesweeperGameProps) {
     const [board, setBoard] = useState(props.game.board);
-    const [revealed, setRevealed] = useState(props.game.revealed);
-    const [flags, setFlags] = useState(props.game.flags);
+    const tilesLeft = board.length * board[0].length;
 
     const tileSize = Math.min(
         Dimensions.get('window').width / props.game.boardWidth,
@@ -19,16 +18,17 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
 
     const onTilePress = (rowIndex : number, colIndex : number) => {
         const newBoard = [...board];
-        const newRevealed = [...revealed];
-        revealZeroes(newBoard, newRevealed, rowIndex, colIndex);
+        revealTile(newBoard, rowIndex, colIndex);
         setBoard(newBoard);
-        setRevealed(newRevealed)
+        if (tilesLeft == props.game.numMines) {
+            // TODO: GAME WIN
+        }
     }
 
     const onTileHold = (rowIndex : number, colIndex : number) => {
-        const newFlags = [...flags];
-        newFlags[rowIndex][colIndex] = !newFlags[rowIndex][colIndex]
-        setFlags(newFlags)
+        const newBoard = [...board];
+        newBoard[rowIndex][colIndex].isFlagged = !newBoard[rowIndex][colIndex].isFlagged
+        setBoard(newBoard)
     }
 
     handleTileSize();
@@ -43,11 +43,9 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
                             rowIndex={rowIndex} 
                             colIndex={colIndex} 
                             tileSize={tileSize} 
-                            number={tile} 
-                            isRevealed={revealed[rowIndex][colIndex]} 
+                            tileInfo={tile} 
                             onPress={onTilePress}
                             onHold={onTileHold}
-                            isFlag={flags[rowIndex][colIndex]}
                         />
                     ))}
                 </View>
@@ -90,18 +88,18 @@ const styles = StyleSheet.create({
     },
 });
 
-function revealZeroes(board : number[][], revealed : boolean[][], i: number, j : number) {
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || revealed[i][j]) return;
+function revealTile(board : TileInfo[][], i: number, j : number) {
+    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j].isRevealed) return;
     // set reveal
-    revealed[i][j] = true;
-    if (board[i][j] === 0) {
-        revealZeroes(board, revealed, i + 1, j);
-        revealZeroes(board, revealed, i - 1, j);
-        revealZeroes(board, revealed, i, j + 1);
-        revealZeroes(board, revealed, i, j - 1);
-        revealZeroes(board, revealed, i + 1, j - 1);
-        revealZeroes(board, revealed, i - 1, j - 1);
-        revealZeroes(board, revealed, i + 1, j + 1);
-        revealZeroes(board, revealed, i - 1, j + 1);
+    board[i][j].isRevealed = true;
+    if (board[i][j].bombsNearby === 0) {
+        revealTile(board, i + 1, j);
+        revealTile(board, i - 1, j);
+        revealTile(board, i, j + 1);
+        revealTile(board, i, j - 1);
+        revealTile(board, i + 1, j - 1);
+        revealTile(board, i - 1, j - 1);
+        revealTile(board, i + 1, j + 1);
+        revealTile(board, i - 1, j + 1);
     }
 }

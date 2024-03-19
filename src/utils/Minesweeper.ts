@@ -4,18 +4,27 @@ export interface MinesweeperProps {
     numMines : number
 }
 
+export interface TileInfo {
+    bombsNearby : number,
+    isFlagged : boolean,
+    isRevealed : boolean
+}
+
 export class Minesweeper {
-    readonly board : number[][];
-    readonly flags : boolean[][];
-    readonly revealed : boolean[][]
+    readonly board : TileInfo[][];
     readonly boardWidth : number;
     readonly boardHeight : number;
     readonly numMines: number;
 
     constructor(props : MinesweeperProps) {
-        this.board = new Array(props.boardHeight).fill(0).map(() => (new Array(props.boardWidth).fill(0)));
-        this.flags = this.revealed = new Array(props.boardHeight).fill(false).map(() => (new Array(props.boardWidth).fill(false)));
-        this.revealed = new Array(props.boardHeight).fill(false).map(() => (new Array(props.boardWidth).fill(false)));
+        this.board = new Array(9).fill(null).map(() => {
+            return new Array(9).fill(null).map(() => ({
+              bombsNearby: 0,
+              isFlagged: false,
+              isRevealed: false,
+            }));
+        });
+          
         this.boardWidth = props.boardWidth;
         this.boardHeight = props.boardHeight;
         this.numMines = props.numMines;
@@ -26,18 +35,7 @@ export class Minesweeper {
         var text = "";
         for (let i = 0; i < this.board.length; i++) {
             for (let j = 0; j < this.board[0].length; j++) {
-                text += this.board[i][j] + "\t";
-            }
-            text += "\n"
-        }
-        console.log(text + "\n\n\n\n\n")
-    }
-
-    printVisited() {
-        var text = "";
-        for (let i = 0; i < this.revealed.length; i++) {
-            for (let j = 0; j < this.revealed[0].length; j++) {
-                text += this.revealed[i][j] + "\t";
+                text += this.board[i][j].bombsNearby + "\t";
             }
             text += "\n"
         }
@@ -49,8 +47,8 @@ export class Minesweeper {
         while (placedMines < this.numMines) {
             const randX = Math.floor(Math.random() * (this.boardWidth));
             const randY = Math.floor(Math.random() * (this.boardHeight));
-            if (this.board[randX][randY] != -1) {
-                this.board[randX][randY] = -1 // place bomb
+            if (this.board[randX][randY].bombsNearby != -1) {
+                this.board[randX][randY].bombsNearby = -1 // place bomb
                 this.calculateNeighbors(randX, randY);
                 placedMines++;
             }
@@ -69,8 +67,8 @@ export class Minesweeper {
             const newCol = j + col;
 
             if (newRow >= 0 && newRow < this.boardWidth && newCol >= 0 && newCol < this.boardHeight) {
-                if (this.board[newRow][newCol] != -1) 
-                    this.board[newRow][newCol]++;
+                if (this.board[newRow][newCol].bombsNearby != -1) 
+                    this.board[newRow][newCol].bombsNearby++;
             }
         })
     }
