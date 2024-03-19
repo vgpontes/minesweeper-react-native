@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
       padding: "auto",
-      backgroundColor: "green",
+      backgroundColor: "#242423",
       aspectRatio: 1
     },
     row: {

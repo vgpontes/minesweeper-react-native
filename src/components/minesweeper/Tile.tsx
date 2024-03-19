@@ -48,7 +48,20 @@ export function Tile(props : TileProps) {
         return bombsNearby ? bombsNearby : "";
     }
 
-    const bgColor = isRevealed ? '#EFD8A3' : '#8FE186'
+    //#F06449
+
+    const bgColorPicker = () => {
+        if (!isRevealed) {
+            return '#8FE186';
+        }
+        if (isBomb) {
+            return '#D33F49';
+        }
+        return '#EFD8A3'
+    }
+
+
+    const bgColor = bgColorPicker();
     
     return (
         <Pressable
