@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Text, Pressable, StyleSheet } from "react-native";
 
 export interface TileProps {
@@ -6,7 +5,10 @@ export interface TileProps {
     rowIndex: number
     colIndex: number
     number: number
-    updateNeighboringTiles: (rowIndex : number, colIndex : number) => void
+    isRevealed: boolean
+    isFlag: boolean
+    onPress: (rowIndex, colIndex) => void;
+    onHold: (rowIndex, colIndex) => void;
 }
 
 const styles = StyleSheet.create({
@@ -20,31 +22,36 @@ const styles = StyleSheet.create({
 });
 
 export function Tile(props : TileProps) {
-    const [pressed, setPressed] = useState(false);
-    const [backgroundColor, setBackgroundColor] = useState('#8FE186');
-
     const handlePress = () => {
+        if (props.isFlag) {
+            return;
+        }
         console.log('Pressed', props.rowIndex, props.colIndex);
-          
-        setPressed(true);
-        setBackgroundColor('#EFD8A3')
-        props.updateNeighboringTiles(props.rowIndex, props.colIndex);
+        props.onPress(props.rowIndex, props.colIndex);
     };
+    
+    const handleHold = () => {
+        console.log('Held', props.rowIndex, props.colIndex);
+        props.onHold(props.rowIndex, props.colIndex);
+    };
+
+    const bgColor = props.isRevealed ? '#EFD8A3' : '#8FE186'
     
     return (
         <Pressable
             onPress={handlePress}
-            disabled={pressed}
+            onLongPress={handleHold}
+            disabled={props.isRevealed}
             hitSlop={{top: 10}}
             style={({pressed}) => [
                 styles.square, 
                     {
                         height: props.tileSize - 5, 
                         width: props.tileSize - 5,
-                        backgroundColor: pressed ? '#62B958' : backgroundColor
+                        backgroundColor: pressed ? '#62B958': bgColor 
                     }]
                 }>
-            <Text>{props.number}</Text>
+            {props.isRevealed ? <Text>{props.number}</Text> : props.isFlag ? <Text>FLAG</Text> : null}
         </Pressable>
     )
 }
