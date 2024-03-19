@@ -12,8 +12,9 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     const [board, setBoard] = useState(props.game.board);
     const boardHeight = board.length;
     const boardWidth = board[0].length;
+    const [revealCount, setRevealCount] = useState(0);
     const [firstPress, setFirstPress] = useState(true);
-    
+
     const tileSize = Math.min(
         Dimensions.get('window').width / boardWidth,
         Dimensions.get('window').height / boardHeight
@@ -25,10 +26,20 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
             placeMines(newBoard, rowIndex, colIndex, props.numMines);
             setFirstPress(false);
         }
-        revealTile(newBoard, rowIndex, colIndex);
-        setBoard(newBoard);
-        if (newBoard[rowIndex][colIndex].bombsNearby == -1) {
+        var countObj = { val: revealCount };
+        revealTile(newBoard, rowIndex, colIndex, countObj);
 
+        const newRevealCount = countObj.val;
+        setRevealCount(newRevealCount);
+        setBoard(newBoard);
+
+        if (newRevealCount == (boardHeight * boardWidth - props.numMines)) {
+            //TODO: Win condition
+            console.log("You Win")
+        }
+        if (newBoard[rowIndex][colIndex].bombsNearby == -1) {
+            // TODO: Lose condition
+            console.log("You Lose")
         }
     }
 

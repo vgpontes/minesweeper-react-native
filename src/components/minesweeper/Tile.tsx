@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 export function Tile(props : TileProps) {
-    const {bombsNearby, isFlagged, isRevealed} = props.tileInfo;
+    const {bombsNearby, isFlagged, isRevealed, isBomb} = props.tileInfo;
     const handlePress = () => {
         if (isFlagged) {
             return;
@@ -34,6 +34,19 @@ export function Tile(props : TileProps) {
         console.log('Held', props.rowIndex, props.colIndex);
         props.onHold(props.rowIndex, props.colIndex);
     };
+
+    const tileText = () => {
+        if (isFlagged) {
+            return "\u{1F6A9}";
+        }
+        if (!isRevealed) {
+            return "";
+        }
+        if (isBomb) {
+            return "\u{1F4A3}";
+        }
+        return bombsNearby ? bombsNearby : "";
+    }
 
     const bgColor = isRevealed ? '#EFD8A3' : '#8FE186'
     
@@ -51,7 +64,7 @@ export function Tile(props : TileProps) {
                         backgroundColor: pressed ? '#62B958': bgColor 
                     }]
                 }>
-            {isRevealed ? <Text>{bombsNearby ? bombsNearby : ""}</Text> : isFlagged ? <Text>FLAG</Text> : null}
+            <Text>{tileText()}</Text>
         </Pressable>
     )
 }

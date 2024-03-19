@@ -5,6 +5,7 @@ export interface MinesweeperProps {
 
 export interface TileInfo {
     bombsNearby : number,
+    isBomb : boolean
     isFlagged : boolean,
     isRevealed : boolean
 }
@@ -23,6 +24,7 @@ export class Minesweeper {
               bombsNearby: 0,
               isFlagged: false,
               isRevealed: false,
+              isBomb: false
             }));
         });
     }
@@ -42,6 +44,7 @@ export class Minesweeper {
 export function placeMines(board : TileInfo[][], initialX : number, initialY : number, numMines : number) {
     var placedMines = 0;
     var coordinates : Coordinate[] = [];
+    
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
             if (isValidNeighbor(i, j, initialX, initialY)) continue;
@@ -53,6 +56,7 @@ export function placeMines(board : TileInfo[][], initialX : number, initialY : n
         const randomCoordinate = coordinates[Math.floor(Math.random() * coordinates.length)];
         const x = randomCoordinate.x;
         const y = randomCoordinate.y;
+        board[x][y].isBomb = true;
         board[x][y].bombsNearby = -1;
         calculateNeighbors(board, x, y);
         const index =  coordinates.indexOf(randomCoordinate);
@@ -77,23 +81,24 @@ function calculateNeighbors(board, i, j) {
         const newCol = j + col;
 
         if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length) {
-            if (board[newRow][newCol].bombsNearby != -1) 
+            if (!board[newRow][newCol].isBomb) 
                 board[newRow][newCol].bombsNearby++;
         }
     })
 }
 
-export function revealTile(board : TileInfo[][], i: number, j : number) {
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j].isRevealed) return;
+export function revealTile(board : TileInfo[][], i: number, j : number, countObj) {
+    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j].isRevealed || board[i][j].isFlagged) return;
     board[i][j].isRevealed = true;
+    countObj.val++;
     if (board[i][j].bombsNearby === 0) {
-        revealTile(board, i + 1, j);
-        revealTile(board, i - 1, j);
-        revealTile(board, i, j + 1);
-        revealTile(board, i, j - 1);
-        revealTile(board, i + 1, j - 1);
-        revealTile(board, i - 1, j - 1);
-        revealTile(board, i + 1, j + 1);
-        revealTile(board, i - 1, j + 1);
+        revealTile(board, i + 1, j, countObj);
+        revealTile(board, i - 1, j, countObj);
+        revealTile(board, i, j + 1, countObj);
+        revealTile(board, i, j - 1, countObj);
+        revealTile(board, i + 1, j - 1, countObj);
+        revealTile(board, i - 1, j - 1, countObj);
+        revealTile(board, i + 1, j + 1, countObj);
+        revealTile(board, i - 1, j + 1, countObj);
     }
 }
