@@ -7,6 +7,12 @@ export interface MinesweeperGameProps {
     game: Minesweeper
 }
 
+export enum GAME_STATUS {
+    InProgress,
+    Win,
+    Lose
+}
+
 export default function MinesweeperGame(props: MinesweeperGameProps) {
     const game = props.game;
     const [board, setBoard] = useState(game.board);
@@ -14,7 +20,7 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     const boardWidth = board[0].length;
     const [revealCount, setRevealCount] = useState(0);
     const [firstPress, setFirstPress] = useState(true);
-    const [lostGame, setLostGame] = useState(false);
+    const [gameStatus, setGameStatus] = useState(GAME_STATUS.InProgress);
 
     const tileSize = Math.min(
         Dimensions.get('window').width / boardWidth,
@@ -36,14 +42,15 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
         if (newRevealCount == (boardHeight * boardWidth - game.getNumMines())) {
             //TODO: Win condition
             console.log("You Win")
+            setGameStatus(GAME_STATUS.Win)
         }
         if (newBoard[rowIndex][colIndex].minesNearby == -1) {
-            // TODO: Lose condition
+            // Reveal all bomb locations
             game.getMineCoordinates().forEach((coordinate) => {
                 game.revealTile(coordinate.x, coordinate.y);
             });
             console.log("You Lose")
-            setLostGame(true);
+            setGameStatus(GAME_STATUS.Lose);
         }
         setBoard(newBoard);
     }
@@ -69,7 +76,7 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
                             tileInfo={tile} 
                             onPress={onTilePress}
                             onHold={onTileHold}
-                            lostGame={lostGame}
+                            gameStatus={gameStatus}
                         />
                     ))}
                 </View>

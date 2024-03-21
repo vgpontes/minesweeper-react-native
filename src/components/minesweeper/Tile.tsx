@@ -1,5 +1,6 @@
 import { Text, Pressable, StyleSheet } from "react-native";
 import { TileInfo } from "utils/Minesweeper";
+import { GAME_STATUS } from "./MinesweeperGame";
 
 export interface TileProps {
     tileSize: number
@@ -8,7 +9,7 @@ export interface TileProps {
     tileInfo: TileInfo
     onPress: (rowIndex, colIndex) => void;
     onHold: (rowIndex, colIndex) => void;
-    lostGame: boolean;
+    gameStatus: GAME_STATUS;
 }
 
 const styles = StyleSheet.create({
@@ -64,7 +65,7 @@ export function Tile(props : TileProps) {
         <Pressable
             onPress={handlePress}
             onLongPress={handleHold}
-            disabled={isRevealed || props.lostGame}
+            disabled={isRevealed || props.gameStatus == GAME_STATUS.Win || props.gameStatus == GAME_STATUS.Lose}
             hitSlop={{top: 10}}
             style={({pressed}) => [
                 styles.square, 
