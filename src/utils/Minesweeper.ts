@@ -1,11 +1,12 @@
 export interface MinesweeperProps {
     boardWidth : number,
     boardHeight : number,
+    numMines : number
 }
 
 export interface TileInfo {
-    bombsNearby : number,
-    isBomb : boolean
+    minesNearby : number,
+    isMine : boolean
     isFlagged : boolean,
     isRevealed : boolean
 }
@@ -17,88 +18,104 @@ interface Coordinate {
 
 export class Minesweeper {
     readonly board : TileInfo[][];
+    private mineCoordinates : Coordinate[];
+    private numMines : number
 
     constructor(props : MinesweeperProps) {
         this.board = new Array(props.boardWidth).fill(null).map(() => {
             return new Array(props.boardHeight).fill(null).map(() => ({
-              bombsNearby: 0,
+              minesNearby: 0,
               isFlagged: false,
               isRevealed: false,
-              isBomb: false
+              isMine: false
             }));
         });
+        this.numMines = props.numMines;
+        this.mineCoordinates = [];
     }
 
     printBoard() {
         var text = "";
         for (let i = 0; i < this.board.length; i++) {
             for (let j = 0; j < this.board[0].length; j++) {
-                text += this.board[i][j].bombsNearby + "\t";
+                text += this.board[i][j].minesNearby + "\t";
             }
             text += "\n"
         }
         console.log(text + "\n\n\n\n\n")
     }
-}
 
-export function placeMines(board : TileInfo[][], initialX : number, initialY : number, numMines : number) {
-    var placedMines = 0;
-    var coordinates : Coordinate[] = [];
+    getMineCoordinates() {
+        return this.mineCoordinates;
+    }
+
+    placeMines(initialX : number, initialY : number) {
+        var placedMines = 0;
+        var coordinates : Coordinate[] = [];
+        
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board[0].length; j++) {
+                if (this.isValidNeighbor(i, j, initialX, initialY)) continue;
+                coordinates.push({x: i, y: j}); 
+            }
+        }
     
-    for (let i = 0; i < board.length; i++) {
-        for (let j = 0; j < board[0].length; j++) {
-            if (isValidNeighbor(i, j, initialX, initialY)) continue;
-            coordinates.push({x: i, y: j}); 
+        while (placedMines < this.numMines) {
+            const randomCoordinate = coordinates[Math.floor(Math.random() * coordinates.length)];
+            const x = randomCoordinate.x;
+            const y = randomCoordinate.y;
+            this.board[x][y].isMine = true;
+            this.board[x][y].minesNearby = -1;
+            this.mineCoordinates.push(randomCoordinate);
+            this.calculateNeighbors(x, y);
+            const index =  coordinates.indexOf(randomCoordinate);
+            coordinates.splice(index, 1);
+            placedMines++;
+        }
+    }
+    
+    isValidNeighbor(x, y, initialX, initialY) {
+        return (x == initialX && y == initialY) || (Math.abs(x - initialX) <= 1 && Math.abs(y - initialY) <= 1);
+    }
+    
+    calculateNeighbors(i, j) {
+        const positions = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1],           [0, 1],
+            [1, -1],  [1, 0],  [1, 1]
+        ]
+    
+        positions.forEach(([row, col]) =>{
+            const newRow = i + row;
+            const newCol = j + col;
+    
+            if (newRow >= 0 && newRow < this.board.length && newCol >= 0 && newCol < this.board[0].length) {
+                if (this.board[newRow][newCol].isMine == false) 
+                    this.board[newRow][newCol].minesNearby++;
+            }
+        })
+    }
+    
+    revealTile(i: number, j : number, countObj?) {
+        if (i < 0 || i >= this.board.length || j < 0 || j >= this.board[0].length || this.board[i][j].isRevealed || 
+            this.board[i][j].isFlagged) return;
+        this.board[i][j].isRevealed = true;
+        if (countObj) {
+            countObj.val++;
+        }
+        if (this.board[i][j].minesNearby === 0) {
+            this.revealTile(i + 1, j, countObj);
+            this.revealTile(i - 1, j, countObj);
+            this.revealTile(i, j + 1, countObj);
+            this.revealTile(i, j - 1, countObj);
+            this.revealTile(i + 1, j - 1, countObj);
+            this.revealTile(i - 1, j - 1, countObj);
+            this.revealTile(i + 1, j + 1, countObj);
+            this.revealTile(i - 1, j + 1, countObj);
         }
     }
 
-    while (placedMines < numMines) {
-        const randomCoordinate = coordinates[Math.floor(Math.random() * coordinates.length)];
-        const x = randomCoordinate.x;
-        const y = randomCoordinate.y;
-        board[x][y].isBomb = true;
-        board[x][y].bombsNearby = -1;
-        calculateNeighbors(board, x, y);
-        const index =  coordinates.indexOf(randomCoordinate);
-        coordinates.splice(index, 1);
-        placedMines++;
-    }
-}
-
-function isValidNeighbor(x, y, initialX, initialY) {
-    return (x == initialX && y == initialY) || (Math.abs(x - initialX) <= 1 && Math.abs(y - initialY) <= 1);
-  }
-
-function calculateNeighbors(board, i, j) {
-    const positions = [
-        [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],           [0, 1],
-        [1, -1],  [1, 0],  [1, 1]
-    ]
-
-    positions.forEach(([row, col]) =>{
-        const newRow = i + row;
-        const newCol = j + col;
-
-        if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length) {
-            if (!board[newRow][newCol].isBomb) 
-                board[newRow][newCol].bombsNearby++;
-        }
-    })
-}
-
-export function revealTile(board : TileInfo[][], i: number, j : number, countObj) {
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j].isRevealed || board[i][j].isFlagged) return;
-    board[i][j].isRevealed = true;
-    countObj.val++;
-    if (board[i][j].bombsNearby === 0) {
-        revealTile(board, i + 1, j, countObj);
-        revealTile(board, i - 1, j, countObj);
-        revealTile(board, i, j + 1, countObj);
-        revealTile(board, i, j - 1, countObj);
-        revealTile(board, i + 1, j - 1, countObj);
-        revealTile(board, i - 1, j - 1, countObj);
-        revealTile(board, i + 1, j + 1, countObj);
-        revealTile(board, i - 1, j + 1, countObj);
+    getNumMines() {
+        return this.numMines;
     }
 }

@@ -8,6 +8,7 @@ export interface TileProps {
     tileInfo: TileInfo
     onPress: (rowIndex, colIndex) => void;
     onHold: (rowIndex, colIndex) => void;
+    lostGame: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
 });
 
 export function Tile(props : TileProps) {
-    const {bombsNearby, isFlagged, isRevealed, isBomb} = props.tileInfo;
+    const {minesNearby, isFlagged, isRevealed, isMine} = props.tileInfo;
     const handlePress = () => {
         if (isFlagged) {
             return;
@@ -40,17 +41,17 @@ export function Tile(props : TileProps) {
         if (!isRevealed) {
             return "";
         }
-        if (isBomb) {
+        if (isMine) {
             return "\u{1F4A3}";
         }
-        return bombsNearby ? bombsNearby : "";
+        return minesNearby ? minesNearby : "";
     }
 
     const bgColorPicker = () => {
         if (!isRevealed) {
             return '#8FE186';
         }
-        if (isBomb) {
+        if (isMine) {
             return '#D33F49';
         }
         return '#EFD8A3'
@@ -63,7 +64,7 @@ export function Tile(props : TileProps) {
         <Pressable
             onPress={handlePress}
             onLongPress={handleHold}
-            disabled={isRevealed}
+            disabled={isRevealed || props.lostGame}
             hitSlop={{top: 10}}
             style={({pressed}) => [
                 styles.square, 
