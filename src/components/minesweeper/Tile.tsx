@@ -1,6 +1,6 @@
 import { Text, Pressable, StyleSheet } from "react-native";
 import { TileInfo } from "utils/Minesweeper";
-import { GAME_STATUS } from "./MinesweeperGame";
+import { GAME_STATUS } from "./GameStatus";
 
 export interface TileProps {
     tileSize: number
@@ -15,7 +15,7 @@ export interface TileProps {
 const styles = StyleSheet.create({
     square: {
       borderRadius: 5,
-      margin: 2,
+      margin: 1,
       justifyContent: 'center',
       alignItems: 'center',
       userSelect: "none"

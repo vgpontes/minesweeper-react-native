@@ -1,29 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { registerRootComponent } from 'expo'
-import MinesweeperGame from 'components/minesweeper/MinesweeperGame';
-import { Minesweeper } from 'utils/Minesweeper';
+import { NavigationContainer } from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { HomeScreen } from 'components/menu/HomeScreen';
+import { GameScreen } from 'components/menu/GameScreen';
 
 export default function App() {
-  const minesweeperGame = new Minesweeper({
-    boardHeight: 9,
-    boardWidth: 9,
-    numMines: 10
-  });
+  const Stack = createNativeStackNavigator();
 
   return (
-    <View style={styles.container}>
-      <MinesweeperGame game={minesweeperGame}/>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="HomeScreen" component={HomeScreen}/>
+        <Stack.Screen name="GameScreen" component={GameScreen}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-});
 
 registerRootComponent(App);
