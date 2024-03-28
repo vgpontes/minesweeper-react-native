@@ -1,5 +1,5 @@
 {
-  "name": "minesweeper",
+  "name": "minesweeper-react-native",
   "version": "1.0.0",
   "author": "Victor Pontes <victorgpontes02@gmail.com>",
   "main": "src/App.tsx",
@@ -26,6 +26,8 @@
     "react-native": "0.73.5",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "expo-font": "~11.10.3",
+    "expo-splash-screen": "~0.26.4"
   }
 }

@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Color } from "./GameStatus";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from "react";
 
 const styles = StyleSheet.create({
     box: {
@@ -11,10 +10,11 @@ const styles = StyleSheet.create({
         userSelect: "none",
         backgroundColor: Color.grassColor,
         padding: 20,
-        paddingHorizontal: 30,
+        width: 125,
         flexWrap: 'wrap',
         flexDirection: 'row',
-        gap: 10
+        gap: 25,
+        marginBottom: 10,
     }
 });
 
@@ -23,11 +23,10 @@ export interface FlagBoxProps {
 }
 
 export function FlagBox(props : FlagBoxProps) {
-    const [flagsPlaced, setFlagsPlaced] = useState();
     return (
         <View style={styles.box}>
             <MaterialCommunityIcons name="flag-variant" size={24} color="red"/>
-            <Text>{props.numFlags}</Text>
+            <Text style={{fontFamily: "Cabin"}}>{props.numFlags}</Text>
         </View>
     )
 }

@@ -2,6 +2,7 @@ import { Text, Pressable, StyleSheet } from "react-native";
 import { TileInfo } from "utils/Minesweeper";
 import { GAME_STATUS, Color } from "./GameStatus";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useFonts from "hooks/useFonts";
 
 export interface TileProps {
     tileSize: number
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
 
 export function Tile(props : TileProps) {
     const {minesNearby, isFlagged, isRevealed, isMine} = props.tileInfo;
+
     const handlePress = () => {
         if (isFlagged) {
             return;
@@ -47,7 +49,8 @@ export function Tile(props : TileProps) {
             return <MaterialCommunityIcons name="bomb" size={24} color="black" />
             //return "\u{1F4A3}";
         }
-        return minesNearby ? <Text>{minesNearby}</Text> : null//minesNearby ? minesNearby : "";
+        const fontColor = { 1: "blue", 2: "green", 3: "red", 4: "purple"}
+        return minesNearby ? <Text style={{fontFamily:"Cabin", fontSize:24, color: fontColor[minesNearby]}}>{minesNearby}</Text> : null//minesNearby ? minesNearby : "";
     }
 
     const bgColorPicker = () => {
