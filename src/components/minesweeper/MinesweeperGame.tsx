@@ -42,19 +42,14 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
         setRevealCount(newRevealCount);
 
         if (newRevealCount == (boardHeight * boardWidth - game.getNumMines())) {
-            //TODO: Win condition
-            console.log("You Win");
             setGameStatus(GAME_STATUS.Win);
-            //setSmiley("face-laugh-beam");
         }
         if (newBoard[rowIndex][colIndex].isMine) {
             // Reveal all bomb locations
             game.getMineCoordinates().forEach((coordinate) => {
                 game.revealTile(coordinate.x, coordinate.y);
             });
-            console.log("You Lose");
             setGameStatus(GAME_STATUS.Lose);
-            //setSmiley("face-dizzy");
         }
         setBoard(newBoard);
     }
