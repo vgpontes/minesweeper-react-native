@@ -4,13 +4,14 @@ import { Tile } from "./Tile";
 import { Minesweeper} from "utils/Minesweeper";
 import { GAME_STATUS } from "./GameStatus";
 import { FlagBox } from "./FlagBox";
+import { Button } from "components/menu/Button";
 
 export interface MinesweeperGameProps {
     game: Minesweeper
 }
 
 export default function MinesweeperGame(props: MinesweeperGameProps) {
-    const game = props.game;
+    const [game, setGame] = useState(props.game);
     const [board, setBoard] = useState(game.board);
     const boardHeight = board.length;
     const boardWidth = board[0].length;
@@ -63,7 +64,15 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
         setBoard(newBoard)
     }
 
-    //handleTileSize();
+    const resetGame = () => {
+        const newGame = new Minesweeper({boardHeight: boardHeight, boardWidth: boardWidth, numMines: numFlags});
+        setGame(newGame);
+        setBoard(newGame.board);
+        setRevealCount(0);
+        setFirstPress(true);
+        setGameStatus(GAME_STATUS.InProgress);
+        setNumFlagsPlaced(0);
+    }
     
     return (
         <View style={styles.container}>
@@ -84,6 +93,9 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
                     ))}
                 </View>
             ))}
+            <Button disabled={gameStatus == GAME_STATUS.InProgress} style={{marginTop: 25, opacity: gameStatus == GAME_STATUS.InProgress ? 0 : 100}} onPress={resetGame}>
+                Play Again
+            </Button>
         </View>
     )
 }

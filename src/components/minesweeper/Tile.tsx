@@ -2,7 +2,6 @@ import { Text, Pressable, StyleSheet } from "react-native";
 import { TileInfo } from "utils/Minesweeper";
 import { GAME_STATUS, Color } from "./GameStatus";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import useFonts from "hooks/useFonts";
 
 export interface TileProps {
     tileSize: number

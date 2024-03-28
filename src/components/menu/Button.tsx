@@ -1,4 +1,4 @@
-import { Pressable, View, Text, StyleSheet } from "react-native"
+import { Pressable, Text, StyleSheet } from "react-native"
 import { Color } from "components/minesweeper/GameStatus";
 
 const styles = StyleSheet.create({
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 export function Button(props) {
 
     return (
-        <Pressable style={[styles.button, props.style]} onPress={props.onPress}>
+        <Pressable style={[styles.button, props.style]} onPress={props.onPress} disabled={props.disabled}>
             <Text style={{fontFamily: "Cabin"}}>
                 {props.children}
             </Text>
