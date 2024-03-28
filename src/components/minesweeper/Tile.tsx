@@ -11,6 +11,8 @@ export interface TileProps {
     onPress: (rowIndex, colIndex) => void;
     onHold: (rowIndex, colIndex) => void;
     gameStatus: GAME_STATUS;
+    onPressOut: () => void;
+    onPressIn: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -67,8 +69,10 @@ export function Tile(props : TileProps) {
     
     return (
         <Pressable
+            onPressIn={props.onPressIn}
             onPress={handlePress}
             onLongPress={handleHold}
+            onPressOut={props.onPressOut}
             disabled={isRevealed || props.gameStatus == GAME_STATUS.Win || props.gameStatus == GAME_STATUS.Lose}
             hitSlop={{top: 10}}
             style={({pressed}) => [

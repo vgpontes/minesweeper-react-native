@@ -5,6 +5,7 @@ import { Minesweeper} from "utils/Minesweeper";
 import { GAME_STATUS } from "./GameStatus";
 import { FlagBox } from "./FlagBox";
 import { Button } from "components/menu/Button";
+import { Smiley } from "./Smiley";
 
 export interface MinesweeperGameProps {
     game: Minesweeper
@@ -18,7 +19,8 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     const [revealCount, setRevealCount] = useState(0);
     const [firstPress, setFirstPress] = useState(true);
     const [gameStatus, setGameStatus] = useState(GAME_STATUS.InProgress);
-    const [numFlagsPlaced, setNumFlagsPlaced] = useState(0)
+    const [numFlagsPlaced, setNumFlagsPlaced] = useState(0);
+    const [smiley, setSmiley] = useState("face-smile")
 
     const numFlags = game.getNumMines();
 
@@ -41,16 +43,18 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
 
         if (newRevealCount == (boardHeight * boardWidth - game.getNumMines())) {
             //TODO: Win condition
-            console.log("You Win")
-            setGameStatus(GAME_STATUS.Win)
+            console.log("You Win");
+            setGameStatus(GAME_STATUS.Win);
+            //setSmiley("face-laugh-beam");
         }
-        if (newBoard[rowIndex][colIndex].minesNearby == -1) {
+        if (newBoard[rowIndex][colIndex].isMine) {
             // Reveal all bomb locations
             game.getMineCoordinates().forEach((coordinate) => {
                 game.revealTile(coordinate.x, coordinate.y);
             });
-            console.log("You Lose")
+            console.log("You Lose");
             setGameStatus(GAME_STATUS.Lose);
+            //setSmiley("face-dizzy");
         }
         setBoard(newBoard);
     }
@@ -61,7 +65,15 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
         newBoard[rowIndex][colIndex].isFlagged = !tileIsFlagged
         const newFlagsPlaced = tileIsFlagged ? numFlagsPlaced - 1 : numFlagsPlaced + 1;
         setNumFlagsPlaced(newFlagsPlaced);
-        setBoard(newBoard)
+        setBoard(newBoard);
+    }
+
+    const onTilePressIn = () => {
+        setSmiley("face-flushed");
+    }
+
+    const onTilePressOut = () => {
+        setSmiley("face-smile")
     }
 
     const resetGame = () => {
@@ -76,6 +88,7 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     
     return (
         <View style={styles.container}>
+            <Smiley name={smiley} gameStatus={gameStatus}/>
             <FlagBox numFlags={numFlags - numFlagsPlaced}/>
             {
             board.map((row, rowIndex) => (
@@ -89,6 +102,8 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
                             onPress={onTilePress}
                             onHold={onTileHold}
                             gameStatus={gameStatus}
+                            onPressOut={onTilePressOut}
+                            onPressIn={onTilePressIn}
                         />
                     ))}
                 </View>
