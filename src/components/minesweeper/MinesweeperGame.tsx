@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { StyleSheet, View, Dimensions } from "react-native"
+import { StyleSheet, View, Dimensions, Text } from "react-native"
 import { Tile } from "./Tile";
 import { Minesweeper} from "utils/Minesweeper";
 import { GAME_STATUS } from "./GameStatus";
+import { FlagBox } from "./FlagBox";
 
 export interface MinesweeperGameProps {
     game: Minesweeper
@@ -16,6 +17,9 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     const [revealCount, setRevealCount] = useState(0);
     const [firstPress, setFirstPress] = useState(true);
     const [gameStatus, setGameStatus] = useState(GAME_STATUS.InProgress);
+    const [numFlagsPlaced, setNumFlagsPlaced] = useState(0)
+
+    const numFlags = game.getNumMines();
 
     const tileSize = Math.min(
         Dimensions.get('window').width / boardWidth,
@@ -52,7 +56,10 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
 
     const onTileHold = (rowIndex : number, colIndex : number) => {
         const newBoard = [...board];
-        newBoard[rowIndex][colIndex].isFlagged = !newBoard[rowIndex][colIndex].isFlagged
+        const tileIsFlagged = newBoard[rowIndex][colIndex].isFlagged
+        newBoard[rowIndex][colIndex].isFlagged = !tileIsFlagged
+        const newFlagsPlaced = tileIsFlagged ? numFlagsPlaced - 1 : numFlagsPlaced + 1;
+        setNumFlagsPlaced(newFlagsPlaced);
         setBoard(newBoard)
     }
 
@@ -60,6 +67,7 @@ export default function MinesweeperGame(props: MinesweeperGameProps) {
     
     return (
         <View style={styles.container}>
+            <FlagBox numFlags={numFlags - numFlagsPlaced}/>
             {
             board.map((row, rowIndex) => (
                 <View key={rowIndex} style={styles.row}>

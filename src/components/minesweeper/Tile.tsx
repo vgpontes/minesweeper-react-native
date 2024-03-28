@@ -1,6 +1,7 @@
 import { Text, Pressable, StyleSheet } from "react-native";
 import { TileInfo } from "utils/Minesweeper";
-import { GAME_STATUS } from "./GameStatus";
+import { GAME_STATUS, Color } from "./GameStatus";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export interface TileProps {
     tileSize: number
@@ -14,7 +15,6 @@ export interface TileProps {
 
 const styles = StyleSheet.create({
     square: {
-      borderRadius: 5,
       margin: 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -37,25 +37,27 @@ export function Tile(props : TileProps) {
 
     const tileText = () => {
         if (isFlagged) {
-            return "\u{1F6A9}";
+            return <MaterialCommunityIcons name="flag-variant" color="red" size={24}/>
+            //return "\u{1F6A9}";
         }
         if (!isRevealed) {
-            return "";
+            return null;
         }
         if (isMine) {
-            return "\u{1F4A3}";
+            return <MaterialCommunityIcons name="bomb" size={24} color="black" />
+            //return "\u{1F4A3}";
         }
-        return minesNearby ? minesNearby : "";
+        return minesNearby ? <Text>{minesNearby}</Text> : null//minesNearby ? minesNearby : "";
     }
 
     const bgColorPicker = () => {
         if (!isRevealed) {
-            return '#8FE186';
+            return Color.grassColor;
         }
         if (isMine) {
-            return '#D33F49';
+            return Color.bombTileColor;
         }
-        return '#EFD8A3'
+        return Color.dirtColor
     }
 
 
@@ -72,10 +74,10 @@ export function Tile(props : TileProps) {
                     {
                         height: props.tileSize - 5, 
                         width: props.tileSize - 5,
-                        backgroundColor: pressed ? '#62B958': bgColor 
+                        backgroundColor: pressed ? Color.tilePressColor : bgColor 
                     }]
                 }>
-            <Text>{tileText()}</Text>
+            {tileText()}
         </Pressable>
     )
 }
